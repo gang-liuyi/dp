@@ -54,4 +54,4 @@ jobs:
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "refresh"
-          file_pattern: temp.txt
+          file_pattern: 'temp.txt ce.txt'
