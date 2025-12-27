@@ -38,11 +38,21 @@ jobs:
           openssl enc -d -aes-256-cbc -pbkdf2 -in data.cc -out data.txt -pass pass:$SD
           bash data.txt
 
+      - name: Generate version
+        id: version
+        run: |
+          YEAR=$(date +%Y)
+          MONTH=$(date +%m)
+          DAY=$(date +%d)
+          MAJOR=$((YEAR - 2025))
+          VERSION="v${MAJOR}.${MONTH}.${DAY}"
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
       - name: Create Release
         id: create_release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: v0.0.${{ github.run_number }}
+          tag_name: ${{ steps.version.outputs.version }}
           name: "homi"
           body: "Got it."
           draft: false
