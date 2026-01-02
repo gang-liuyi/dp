@@ -1,10 +1,8 @@
 
 name: fki
 on:
-  # 每天 UTC 时间 01:00 运行一次
   schedule:
     - cron: '0 1 * * *'
-  # 允许手动触发
   workflow_dispatch:
   
 jobs:
