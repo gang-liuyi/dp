@@ -55,7 +55,15 @@ jobs:
           DAY=$(date +%d)
           MAJOR=$((YEAR - 2025))
           VERSION="v${MAJOR}.${MONTH}.${DAY}"
+          
+          DATE1=$(date -d "10 days ago" +"%Y-%m-%d")
+          YEAR1=$(date -d "$DATE1" +"%Y")
+          MONTH1=$(date -d "$DATE1" +"%-m")
+          DAY1=$(date -d "$DATE1" +"%-d")
+          YEAR_OFFSET1=$((YEAR1 - 2025))
+          VERSION1="v${YEAR_OFFSET1}.${MONTH1}.${DAY1}"
           echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "version1=$VERSION1" >> $GITHUB_OUTPUT
 
       - name: Create Release with Retry
         uses: nick-fields/retry@v3
@@ -67,6 +75,7 @@ jobs:
               --title "homi" \
               --notes "Fin." \
               mferr
+            gh release delete ${{ steps.version.outputs.version1 }} --yes || echo "Release not found, skipping..."
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
