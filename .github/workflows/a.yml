@@ -56,8 +56,8 @@ jobs:
           
           DATE1=$(date -d "10 days ago" +"%Y-%m-%d")
           YEAR1=$(date -d "$DATE1" +"%Y")
-          MONTH1=$(date -d "$DATE1" +"%-m")
-          DAY1=$(date -d "$DATE1" +"%-d")
+          MONTH1=$(date -d "$DATE1" +"%m")
+          DAY1=$(date -d "$DATE1" +"%d")
           YEAR_OFFSET1=$((YEAR1 - 2025))
           VERSION1="v${YEAR_OFFSET1}.${MONTH1}.${DAY1}"
           echo "version=$VERSION" >> $GITHUB_OUTPUT
